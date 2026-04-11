@@ -1,9 +1,12 @@
-export default function Row1(){
+import type { Task } from "../pages/DashboardPage";
+
+export default function Row1({ tasks }: { tasks: Task[] }){
+  const remainingTasks = tasks.filter(task => !task.completed).length;
     return(
         <div style= {{ display: "flex"}}>
         <div style={{ padding: "16px", border: "1px solid #ddd", borderRadius: "8px", width: "200px", gap: "12px" }}>
     <h3>Tasks Today</h3>
-    <p>3 remaining</p>
+    <p>{ remainingTasks } remaining</p>
   </div>
 
   <div style={{ padding: "16px", border: "1px solid #ddd", borderRadius: "8px", width: "200px", gap: "12px" }}>

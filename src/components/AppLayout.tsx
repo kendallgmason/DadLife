@@ -3,6 +3,8 @@ import TopBar from "./TopBar";
 import DashboardPage from "../pages/DashboardPage";
 
 export default function AppLayout() {
+
+
     return (
         <div style={{ display: "flex" }} className="app">
        
