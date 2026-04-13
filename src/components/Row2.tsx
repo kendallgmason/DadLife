@@ -28,10 +28,22 @@ export default function Row2({ tasks, setTasks }: {
       completed: false,
     };
 
+    if (!newTaskTitle.trim()) return;
+
     setTasks((prevTasks) => [...prevTasks, newTask]);
     setNewTaskTitle("");
     setShowTask(false);
   };
+
+  // Delete a task 
+
+  const deleteTask = ( taskId: number ) => {
+        setTasks((prevTasks) => 
+                  prevTasks.filter((task) => 
+                  taskId !== task.id
+      ))
+       
+  }
 
   return (
     <div style={{ display: "flex", gap: "16px" }}>
@@ -46,10 +58,11 @@ export default function Row2({ tasks, setTasks }: {
           background: "#fff",
         }}
       >
-        <h3>Today's Actions</h3>
+        <h3>Today's Tasks</h3>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {tasks.map((task) => (
+
             <span
               key={task.id}
               style={{
@@ -61,6 +74,7 @@ export default function Row2({ tasks, setTasks }: {
                 onChange={() => handleCheckbox(task.id)}
               />
               {task.title}
+              <Button onClick={() => deleteTask(task.id)}>Delete</Button>
             </span>
           ))}
         </div>
@@ -87,7 +101,7 @@ export default function Row2({ tasks, setTasks }: {
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               <Input
                 value={newTaskTitle}
-                placeholder="Enter the new task here.."
+                placeholder="Enter a task for today"
                 onChange={(_, data) => setNewTaskTitle(data.value)}
               />
               <Button onClick={handleAddTask}>Save Task</Button>
