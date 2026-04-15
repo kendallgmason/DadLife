@@ -1,26 +1,43 @@
-import { Button } from "@fluentui/react-components";
+import { makeStyles } from "@fluentui/react-components";
 
-export default function TopBar(){
-    
-    const now = new Date();
-    const date = now.toLocaleDateString("en-GB");
-    const time = now.toLocaleTimeString('en-GB')
+const useStyles = makeStyles({
+  root: {
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: "24px",
+    padding: "16px 24px",
+    backgroundColor: "#ffffff",
+    minHeight: "72px",
+    boxSizing: "border-box",
 
-    return (
-    <div 
-     style={{ 
-              height: "60px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between" 
-             }}
-             >
+    "@media (max-width: 900px)": {
+      display: "none",
+    },
+  },
 
-      <h3>My Dashboard</h3>
-      <div>
-      <Button style={{ fontSize: "10px" }} appearance="subtle">Welcome, Kendall</Button>
-      <Button style={{ fontSize: "10px" }} appearance="subtle">Date: {date} Time: {time}</Button>
-      </div>
+  text: {
+    fontSize: "16px",
+    fontWeight: 600,
+    color: "#323130",
+    whiteSpace: "nowrap",
+  },
+});
+
+export default function TopBar() {
+  const styles = useStyles();
+
+  const now = new Date();
+
+  const date = now.toLocaleDateString("en-GB");
+  const time = now.toLocaleTimeString("en-GB");
+
+  return (
+    <div className={styles.root}>
+      <span className={styles.text}>Welcome, Kendall</span>
+      <span className={styles.text}>
+        Date: {date} Time: {time}
+      </span>
     </div>
   );
-};
+}

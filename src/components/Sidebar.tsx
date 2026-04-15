@@ -1,64 +1,100 @@
-import { Button, makeStyles } from "@fluentui/react-components";
+import { makeStyles, mergeClasses } from "@fluentui/react-components";
+
+type SidebarProps = {
+  onNavigate?: () => void;
+};
 
 const useStyles = makeStyles({
-  sidebar: {
-    width: "240px",
-    minHeight: "100vh",
+  root: {
+    height: "100%",
     padding: "24px 16px",
-    backgroundColor: "#f3f3f3",
     boxSizing: "border-box",
-    gap: "12px"
+    backgroundColor: "#ffffff",
   },
-  menuTitle: {
-    fontSize: "24px",
-    fontWeight: "600",
-    marginBottom: "16px",
-    gap: "12px"
+
+  title: {
+    fontSize: "18px",
+    fontWeight: 700,
+    marginBottom: "24px",
   },
-  navButton: {
-    width: "100%",
-    justifyContent: "flex-start",
-    marginBottom: "8px",
-    gap: "12px"
+
+  nav: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "8px",
   },
-  sectionTitle: {
+
+  section: {
     marginTop: "16px",
+  },
+
+  sectionTitle: {
+    fontSize: "13px",
+    fontWeight: 700,
+    color: "#605e5c",
+    textTransform: "uppercase",
+    letterSpacing: "0.04em",
     marginBottom: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#666",
-    gap: "12px"
+    paddingLeft: "12px",
+  },
+
+  link: {
+    padding: "10px 12px",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "16px",
+    fontWeight: 600,
+    color: "#323130",
+
+    ":hover": {
+      backgroundColor: "#f3f2f1",
+    },
+  },
+
+  activeLink: {
+    backgroundColor: "#edebe9",
   },
 });
 
-const Sidebar = () => {
+export default function Sidebar({ onNavigate }: SidebarProps) {
   const styles = useStyles();
 
+  const handleClick = () => {
+    onNavigate?.();
+  };
+
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.menuTitle}>Menu</div>
+    <div className={styles.root}>
+      <div className={styles.title}>Menu</div>
 
-      <Button appearance="subtle" className={styles.navButton}>
-        Dashboard
-      </Button>
+      <nav className={styles.nav}>
+        <div
+          className={mergeClasses(styles.link, styles.activeLink)}
+          onClick={handleClick}
+        >
+          Dashboard
+        </div>
 
-      <div className={styles.sectionTitle}>Lifestyle</div>
-      <Button appearance="subtle" className={styles.navButton}>
-        Fitness
-      </Button>
-      <Button appearance="subtle" className={styles.navButton}>
-        Jiu Jitsu
-      </Button>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Lifestyle</div>
+          <div className={styles.link} onClick={handleClick}>
+            Fitness
+          </div>
+          <div className={styles.link} onClick={handleClick}>
+            Jiu Jitsu
+          </div>
+        </div>
 
-      <div className={styles.sectionTitle}>Home</div>
-      <Button appearance="subtle" className={styles.navButton}>
-        Tasks
-      </Button>
-      <Button appearance="subtle" className={styles.navButton}>
-        Devotions
-      </Button>
-    </aside>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Home</div>
+          <div className={styles.link} onClick={handleClick}>
+            Tasks
+          </div>
+          <div className={styles.link} onClick={handleClick}>
+            Devotions
+          </div>
+        </div>
+      </nav>
+    </div>
   );
-};
-
-export default Sidebar;
+}
