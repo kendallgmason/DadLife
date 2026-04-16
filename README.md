@@ -25,7 +25,8 @@ A responsive dashboard application built with **React** and **TypeScript**, desi
 
 ## 📸 Screenshots
 
-> *(Add screenshots here if you can — this is a big bonus)*
+![Desktop](./src/assets/1.png)
+![Desktop](./src/assets/2.png)
 
 ---
 
