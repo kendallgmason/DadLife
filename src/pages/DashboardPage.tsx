@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -14,6 +14,8 @@ import {
   Dumbbell24Regular,
   CheckmarkCircle24Regular,
 } from "@fluentui/react-icons";
+
+const TASKS_STORAGE_KEY = "dashboard-tasks";
 
 type Task = {
   id: number;
@@ -182,15 +184,31 @@ const useStyles = makeStyles({
 export default function DashboardPage() {
   const styles = useStyles();
 
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, text: "Fold Clothes", completed: true },
-    { id: 2, text: "Take Reggie for a walk", completed: false },
-  ]);
+  // set up local storage, so when browser loads, it has savedItems
+
+  const [ tasks, setTasks ] = useState<Task []>(() => {
+    try{
+      const savedItem = localStorage.getItem(TASKS_STORAGE_KEY);
+      return savedItem ? JSON.parse(savedItem) : [];
+    } 
+    catch(error){
+      console.error("Failed to load tasks:", error);
+      return []
+
+    }
+
+  })
 
   const [weightLogged, setWeightLogged] = useState(false);
   const [bjjSessions, setBjjSessions] = useState(2);
   const [devotionDone, setDevotionDone] = useState(true);
   const [newTask, setNewTask] = useState("");
+
+  // save localStorage when tasks change
+
+  useEffect(() => { 
+    localStorage.setItem("dashboard-tasks", JSON.stringify(tasks));
+  }, [tasks])
 
   const remainingTasks = useMemo(
     () => tasks.filter((task) => !task.completed).length,
