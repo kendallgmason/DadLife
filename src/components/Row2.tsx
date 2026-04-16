@@ -9,7 +9,7 @@ export default function Row2({ tasks, setTasks }: {
   const [showTask, setShowTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
-  // 🔥 Toggle ONE task by id
+  // Toggle ONE task by id
   const handleCheckbox = (taskId: number) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
