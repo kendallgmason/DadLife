@@ -45,6 +45,16 @@ export default function Row2({ tasks, setTasks }: {
        
   }
 
+   // Delete a task 
+
+  const editTask = ( taskId: number ) => {
+        setTasks((prevTasks) => 
+                  prevTasks.filter((task) => 
+                  taskId !== task.id
+      ))
+       
+  }
+
   return (
     <div style={{ display: "flex", gap: "16px" }}>
       
@@ -74,6 +84,7 @@ export default function Row2({ tasks, setTasks }: {
                 onChange={() => handleCheckbox(task.id)}
               />
               {task.title}
+              <Button onClick={() => deleteTask(task.id)}>Edit</Button>
               <Button onClick={() => deleteTask(task.id)}>Delete</Button>
             </span>
           ))}

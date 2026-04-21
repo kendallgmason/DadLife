@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Card,
-  CardHeader,
   Checkbox,
   Input,
   makeStyles,
@@ -124,7 +123,7 @@ const useStyles = makeStyles({
 
   taskRow: {
     display: "grid",
-    gridTemplateColumns: "minmax(0, 1fr) auto",
+    gridTemplateColumns: "minmax(0, 1fr) auto auto",
     gap: "12px",
     alignItems: "center",
 
@@ -147,7 +146,31 @@ const useStyles = makeStyles({
     color: "#605e5c",
   },
 
+  editButton: {
+    minWidth: "100px",
+
+    "@media (max-width: 640px)": {
+      width: "100%",
+    },
+  },
+
   deleteButton: {
+    minWidth: "100px",
+
+    "@media (max-width: 640px)": {
+      width: "100%",
+    },
+  },
+
+  saveButton: {
+    minWidth: "100px",
+
+    "@media (max-width: 640px)": {
+      width: "100%",
+    },
+  },
+
+  cancelButton: {
     minWidth: "100px",
 
     "@media (max-width: 640px)": {
@@ -184,31 +207,26 @@ const useStyles = makeStyles({
 export default function DashboardPage() {
   const styles = useStyles();
 
-  // set up local storage, so when browser loads, it has savedItems
-
-  const [ tasks, setTasks ] = useState<Task []>(() => {
-    try{
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    try {
       const savedItem = localStorage.getItem(TASKS_STORAGE_KEY);
       return savedItem ? JSON.parse(savedItem) : [];
-    } 
-    catch(error){
+    } catch (error) {
       console.error("Failed to load tasks:", error);
-      return []
-
+      return [];
     }
-
-  })
+  });
 
   const [weightLogged, setWeightLogged] = useState(false);
   const [bjjSessions, setBjjSessions] = useState(2);
   const [devotionDone, setDevotionDone] = useState(true);
   const [newTask, setNewTask] = useState("");
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [editTaskInput, setEditTaskInput] = useState("");
 
-  // save localStorage when tasks change
-
-  useEffect(() => { 
-    localStorage.setItem("dashboard-tasks", JSON.stringify(tasks));
-  }, [tasks])
+  useEffect(() => {
+    localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
 
   const remainingTasks = useMemo(
     () => tasks.filter((task) => !task.completed).length,
@@ -236,6 +254,33 @@ export default function DashboardPage() {
         task.id === id ? { ...task, completed: checked } : task
       )
     );
+  };
+
+  const editTask = (id: number) => {
+    const taskToEdit = tasks.find((task) => task.id === id);
+    if (!taskToEdit) return;
+
+    setEditingTaskId(id);
+    setEditTaskInput(taskToEdit.text);
+  };
+
+  const saveTask = (id: number) => {
+    const trimmed = editTaskInput.trim();
+    if (!trimmed) return;
+
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === id ? { ...task, text: trimmed } : task
+      )
+    );
+
+    setEditingTaskId(null);
+    setEditTaskInput("");
+  };
+
+  const cancelEdit = () => {
+    setEditingTaskId(null);
+    setEditTaskInput("");
   };
 
   const deleteTask = (id: number) => {
@@ -306,27 +351,65 @@ export default function DashboardPage() {
             {tasks.map((task) => (
               <div key={task.id} className={styles.taskRow}>
                 <div className={styles.taskMain}>
-                  <Checkbox
-                    checked={task.completed}
-                    onChange={(_, data) => toggleTask(task.id, !!data.checked)}
-                    label={
-                      <span
-                        className={`${styles.taskText} ${
-                          task.completed ? styles.taskTextCompleted : ""
-                        }`}
-                      >
-                        {task.text}
-                      </span>
-                    }
-                  />
+                  {editingTaskId === task.id ? (
+                    <Input
+                      value={editTaskInput}
+                      onChange={(_, data) => setEditTaskInput(data.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") saveTask(task.id);
+                      }}
+                    />
+                  ) : (
+                    <Checkbox
+                      checked={task.completed}
+                      onChange={(_, data) =>
+                        toggleTask(task.id, !!data.checked)
+                      }
+                      label={
+                        <span
+                          className={`${styles.taskText} ${
+                            task.completed ? styles.taskTextCompleted : ""
+                          }`}
+                        >
+                          {task.text}
+                        </span>
+                      }
+                    />
+                  )}
                 </div>
 
-                <Button
-                  className={styles.deleteButton}
-                  onClick={() => deleteTask(task.id)}
-                >
-                  Delete
-                </Button>
+                {editingTaskId === task.id ? (
+                  <>
+                    <Button
+                      className={styles.saveButton}
+                      appearance="primary"
+                      onClick={() => saveTask(task.id)}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      className={styles.cancelButton}
+                      onClick={cancelEdit}
+                    >
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      className={styles.editButton}
+                      onClick={() => editTask(task.id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      className={styles.deleteButton}
+                      onClick={() => deleteTask(task.id)}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
               </div>
             ))}
 
